@@ -1,4 +1,4 @@
-﻿@page "/dogs"
+@page "/dogs"
 
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
@@ -16,7 +16,9 @@
 <QuickGrid Class="table" Items="DbFactory.CreateDbContext().Dog">
     <PropertyColumn Property="dog => dog.Breed" />
     <PropertyColumn Property="dog => dog.age" Title="Age"/>
-    <PropertyColumn Property="dog => dog.ImageUrl" Title="Image"/>
+    <TemplateColumn Title="Image" Context="dog">
+        <img src="@dog.ImageUrl" alt="@dog.Breed" style="max-width: 100px; max-height: 100px;" />
+    </TemplateColumn>
     <PropertyColumn Property="dog => dog.Description" />
     <PropertyColumn Property="dog => dog.HealthStatus" Title="Health Status"/>
     <PropertyColumn Property="dog => dog.Temperament" />
