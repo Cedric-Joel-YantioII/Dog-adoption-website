@@ -1,0 +1,95 @@
+﻿@page "/AdminUsers/edit"
+
+@using Microsoft.EntityFrameworkCore
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Edit</PageTitle>
+
+<h1>Edit</h1>
+
+<h4>AdminUser</h4>
+<hr />
+@if (AdminUser is null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <div class="row">
+        <div class="col-md-4">
+            <EditForm method="post" Model="AdminUser" OnValidSubmit="UpdateAdminUser" FormName="edit" Enhance>
+                <DataAnnotationsValidator />
+                <ValidationSummary />
+                <input type="hidden" name="AdminUser.Id" value="@AdminUser.Id" />
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username:</label>
+                    <InputText id="username" @bind-Value="AdminUser.Username" class="form-control" />
+                    <ValidationMessage For="() => AdminUser.Username" class="text-danger" />
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password:</label>
+                    <InputText id="password" @bind-Value="AdminUser.Password" class="form-control" />
+                    <ValidationMessage For="() => AdminUser.Password" class="text-danger" />
+                </div>
+                <button type="submit" class="btn btn-primary">Save</button>
+            </EditForm>
+        </div>
+    </div>
+}
+
+<div>
+    <a href="/adminusers">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    [SupplyParameterFromForm]
+    public AdminUser? AdminUser { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        AdminUser ??= await context.AdminUser.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (AdminUser is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+
+    // To protect from overposting attacks, enable the specific properties you want to bind to.
+    // For more details, see https://aka.ms/RazorPagesCRUD.
+    public async Task UpdateAdminUser()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Attach(AdminUser!).State = EntityState.Modified;
+
+        try
+        {
+            await context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!AdminUserExists(AdminUser!.Id))
+            {
+                NavigationManager.NavigateTo("notfound");
+            }
+            else
+            {
+                throw;
+            }
+        }
+
+        NavigationManager.NavigateTo("/adminusers");
+    }
+
+    bool AdminUserExists(int id)
+    {
+        using var context = DbFactory.CreateDbContext();
+        return context.AdminUser.Any(e => e.Id == id);
+    }
+}

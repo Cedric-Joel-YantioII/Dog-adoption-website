@@ -1,0 +1,51 @@
+﻿@page "/adminusers/create"
+
+@using Microsoft.EntityFrameworkCore
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>AdminUser</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="AdminUser" OnValidSubmit="AddAdminUser" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="username" class="form-label">Username:</label> 
+                <InputText id="username" @bind-Value="AdminUser.Username" class="form-control" /> 
+                <ValidationMessage For="() => AdminUser.Username" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="password" class="form-label">Password:</label> 
+                <InputText id="password" @bind-Value="AdminUser.Password" class="form-control" /> 
+                <ValidationMessage For="() => AdminUser.Password" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/adminusers">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public AdminUser AdminUser { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddAdminUser()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.AdminUser.Add(AdminUser);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/adminusers");
+    }
+}

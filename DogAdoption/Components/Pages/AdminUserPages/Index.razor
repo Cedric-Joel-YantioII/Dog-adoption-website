@@ -1,0 +1,25 @@
+﻿@page "/adminusers"
+
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="adminusers/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="DbFactory.CreateDbContext().AdminUser">
+    <PropertyColumn Property="adminuser => adminuser.Username" />
+    <PropertyColumn Property="adminuser => adminuser.Password" />
+
+    <TemplateColumn Context="adminuser">
+        <a href="@($"adminusers/edit?id={adminuser.Id}")">Edit</a> |
+        <a href="@($"adminusers/details?id={adminuser.Id}")">Details</a> |
+        <a href="@($"adminusers/delete?id={adminuser.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>

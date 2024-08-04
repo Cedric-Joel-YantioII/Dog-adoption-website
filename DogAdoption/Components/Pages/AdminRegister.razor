@@ -1,0 +1,52 @@
+﻿@page "/admin/register"
+
+@using Microsoft.EntityFrameworkCore
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Register User</PageTitle>
+
+<h1>Register Admin User</h1>
+
+<hr />
+
+<EditForm Model="@adminUser" OnValidSubmit="@HandleRegister" FormName="adminRegisterForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="adminUser.Username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="adminUser.Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</EditForm>
+
+@code {
+    private AdminUser adminUser = new AdminUser();
+
+    private async Task HandleRegister()
+    {
+        try
+        {
+            using var dbContext = DbFactory.CreateDbContext();
+            dbContext.AdminUser.Add(adminUser);
+            await dbContext.SaveChangesAsync();
+
+            // Redirect to the login page after successful registration
+            NavigationManager.NavigateTo("/admin/login");
+        }
+        catch (Exception ex)
+        {
+            // Handle the exception (e.g., log it, display an error message)
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+}
+
+
+

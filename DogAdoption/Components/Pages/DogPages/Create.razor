@@ -1,0 +1,71 @@
+﻿@page "/dogs/create"
+
+@using Microsoft.EntityFrameworkCore
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h4>Dog</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Dog" OnValidSubmit="AddDog" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" />
+            <div class="mb-3">
+                <label for="breed" class="form-label">Breed:</label> 
+                <InputText id="breed" @bind-Value="Dog.Breed" class="form-control" /> 
+                <ValidationMessage For="() => Dog.Breed" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="age" class="form-label">age:</label> 
+                <InputNumber id="age" @bind-Value="Dog.age" class="form-control" /> 
+                <ValidationMessage For="() => Dog.age" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="imageurl" class="form-label">ImageUrl:</label> 
+                <InputText id="imageurl" @bind-Value="Dog.ImageUrl" class="form-control" /> 
+                <ValidationMessage For="() => Dog.ImageUrl" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="description" class="form-label">Description:</label> 
+                <InputText id="description" @bind-Value="Dog.Description" class="form-control" /> 
+                <ValidationMessage For="() => Dog.Description" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="healthstatus" class="form-label">HealthStatus:</label> 
+                <InputText id="healthstatus" @bind-Value="Dog.HealthStatus" class="form-control" /> 
+                <ValidationMessage For="() => Dog.HealthStatus" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="temperament" class="form-label">Temperament:</label> 
+                <InputText id="temperament" @bind-Value="Dog.Temperament" class="form-control" /> 
+                <ValidationMessage For="() => Dog.Temperament" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/dogs">Back to List</a>
+</div>
+
+@code {
+
+    [SupplyParameterFromForm]
+    public Dog Dog { get; set; } = new();
+
+    // To protect from overposting attacks, see https://aka.ms/RazorPagesCRUD
+    public async Task AddDog()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Dog.Add(Dog);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/dogs");
+    }
+}

@@ -1,0 +1,54 @@
+﻿@page "/admin/login"
+
+@using Microsoft.EntityFrameworkCore
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Admin Login</PageTitle>
+
+<h1>Admin Login</h1>
+
+<hr />
+
+<EditForm Model="@adminUser" OnValidSubmit="@HandleLogin">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label for="username">Username</label>
+        <InputText id="username" @bind-Value="adminUser.Username" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label for="password">Password</label>
+        <InputText id="password" @bind-Value="adminUser.Password" type="password" class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">Login</button>
+</EditForm>
+
+<div>
+    <a href="/admin/register">Register User</a>
+</div>
+
+@code {
+    private AdminUser adminUser = new AdminUser();
+
+    private async Task HandleLogin()
+    {
+        using var dbContext = DbFactory.CreateDbContext();
+        var existingUser = await dbContext.AdminUser
+            .FirstOrDefaultAsync(u => u.Username == adminUser.Username && u.Password == adminUser.Password);
+
+        if (existingUser != null)
+        {
+            // Successfully logged in
+            // Navigate to admin dashboard or another page
+            NavigationManager.NavigateTo("/admin/dashboard");
+        }
+        else
+        {
+            // Show error message
+            // Example: set a flag to show a message in the UI
+        }
+    }
+}

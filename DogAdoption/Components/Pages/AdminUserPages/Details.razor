@@ -1,0 +1,49 @@
+﻿@page "/adminusers/details"
+
+@using Microsoft.EntityFrameworkCore
+@using DogAdoption.Models
+@inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h4>AdminUser</h4>
+    <hr />
+    @if (adminuser is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Username</dt>
+            <dd class="col-sm-10">@adminuser.Username</dd>
+            <dt class="col-sm-2">Password</dt>
+            <dd class="col-sm-10">@adminuser.Password</dd>
+        </dl>
+        <div>
+            <a href="@($"/adminusers/edit?id={adminuser.Id}")">Edit</a> |
+            <a href="@($"/adminusers")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    AdminUser? adminuser;
+
+    [SupplyParameterFromQuery]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        adminuser = await context.AdminUser.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (adminuser is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}
