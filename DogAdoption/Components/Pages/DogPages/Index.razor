@@ -1,9 +1,11 @@
-@page "/dogs"
+﻿@page "/dogs"
 
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using DogAdoption.Models
 @inject IDbContextFactory<DogAdoption.Data.DogAdoptionContext> DbFactory
+
+<PageTitle>Index</PageTitle>
 
 <PageTitle>Index</PageTitle>
 
@@ -18,14 +20,14 @@
 </p>
 
 <QuickGrid Class="table" Items="DbFactory.CreateDbContext().Dog">
-    <PropertyColumn Property="dog => dog.Id" />
+    <PropertyColumn Property="dog => dog.Name" />
     <PropertyColumn Property="dog => dog.Breed" />
-    <PropertyColumn Property="dog => dog.age" Title="Age"/>
+    <PropertyColumn Property="dog => dog.age" />
     <TemplateColumn Title="Image" Context="dog">
         <img src="@dog.ImageUrl" alt="@dog.Breed" style="max-width: 100px; max-height: 100px;" />
     </TemplateColumn>
     <PropertyColumn Property="dog => dog.Description" />
-    <PropertyColumn Property="dog => dog.HealthStatus" Title="Health Status"/>
+    <PropertyColumn Property="dog => dog.HealthStatus" />
     <PropertyColumn Property="dog => dog.Temperament" />
 
     <TemplateColumn Context="dog">

@@ -24,6 +24,11 @@ else
                 <ValidationSummary />
                 <input type="hidden" name="Dog.Id" value="@Dog.Id" />
                 <div class="mb-3">
+                    <label for="name" class="form-label">Name:</label>
+                    <InputText id="name" @bind-Value="Dog.Name" class="form-control" />
+                    <ValidationMessage For="() => Dog.Name" class="text-danger" />
+                </div>
+                <div class="mb-3">
                     <label for="breed" class="form-label">Breed:</label>
                     <InputText id="breed" @bind-Value="Dog.Breed" class="form-control" />
                     <ValidationMessage For="() => Dog.Breed" class="text-danger" />
