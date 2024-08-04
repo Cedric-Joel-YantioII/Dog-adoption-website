@@ -38,6 +38,7 @@
 </div>
 
 @code {
+    
     [SupplyParameterFromForm]
     private AdminUser adminUser { get; set; } = new AdminUser();
     private bool showErrorMessage = false;
@@ -50,9 +51,7 @@
 
         if (existingUser != null)
         {
-            // Successfully logged in
-            // Navigate to admin dashboard or another page
-            NavigationManager.NavigateTo("/");
+            NavigationManager.NavigateTo("/adminDogsView");
         }
         else
         {
