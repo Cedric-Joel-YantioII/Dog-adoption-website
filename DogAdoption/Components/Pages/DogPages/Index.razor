@@ -1,5 +1,5 @@
-﻿@page "/dogs"
-
+@page "/dogs"
+@rendermode InteractiveServer
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.AspNetCore.Components.QuickGrid
 @using DogAdoption.Models
@@ -7,32 +7,66 @@
 
 <PageTitle>Index</PageTitle>
 
-<PageTitle>Index</PageTitle>
-
 <h1>Admin Dogs View</h1>
+
+<div>
+    <input placeholder="Search for Dog By Name" @bind="searchTerm" />
+    <button @onclick="SearchDogs">Search</button>
+</div>
 
 <p>
     <a href="dogs/create">Add a dog</a>
 </p>
 
-<p>
-    <a href="dogs/search">Search for a Dog</a>
-</p>
+@if (filteredDogs != null && filteredDogs.Any())
+{
+    <QuickGrid Items="filteredDogs.AsQueryable()" TItem="Dog" Class="table">
+        <PropertyColumn Property="dog => dog.Name" Title="Name" />
+        <PropertyColumn Property="dog => dog.Breed" Title="Breed" />
+        <PropertyColumn Property="dog => dog.age" Title="Age" />
+        <TemplateColumn Title="Image" Context="dog">
+            <img src="@dog.ImageUrl" alt="@dog.Breed" style="max-width: 100px; max-height: 100px;" />
+        </TemplateColumn>
+        <PropertyColumn Property="dog => dog.Description" Title="Description" />
+        <PropertyColumn Property="dog => dog.HealthStatus" Title="Health Status" />
+        <PropertyColumn Property="dog => dog.Temperament" Title="Temperament" />
+        <TemplateColumn Context="dog">
+            <a href="@($"dogs/edit?id={dog.Id}")">Edit</a> |
+            <a href="@($"dogs/details?id={dog.Id}")">Details</a> |
+            <a href="@($"dogs/delete?id={dog.Id}")">Delete</a>
+        </TemplateColumn>
+    </QuickGrid>
+}
+else
+{
+    <p>No results found.</p>
+}
 
-<QuickGrid Class="table" Items="DbFactory.CreateDbContext().Dog">
-    <PropertyColumn Property="dog => dog.Name" />
-    <PropertyColumn Property="dog => dog.Breed" />
-    <PropertyColumn Property="dog => dog.age" />
-    <TemplateColumn Title="Image" Context="dog">
-        <img src="@dog.ImageUrl" alt="@dog.Breed" style="max-width: 100px; max-height: 100px;" />
-    </TemplateColumn>
-    <PropertyColumn Property="dog => dog.Description" />
-    <PropertyColumn Property="dog => dog.HealthStatus" />
-    <PropertyColumn Property="dog => dog.Temperament" />
+@code {
+    private List<Dog> allDogs = new();
+    private List<Dog> filteredDogs = new();
+    private string searchTerm;
 
-    <TemplateColumn Context="dog">
-        <a href="@($"dogs/edit?id={dog.Id}")">Edit</a> |
-        <a href="@($"dogs/details?id={dog.Id}")">Details</a> |
-        <a href="@($"dogs/delete?id={dog.Id}")">Delete</a>
-    </TemplateColumn>
-</QuickGrid>
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        allDogs = await context.Dog.ToListAsync();
+        filteredDogs = allDogs;
+    }
+
+    private void SearchDogs()
+    {
+        Console.WriteLine($"Searching for dog: {searchTerm}");
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            filteredDogs = allDogs
+                .Where(d => d.Name.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+                .ToList();
+               
+        }
+        else
+        {
+            filteredDogs = allDogs;
+        }
+    }
+}
