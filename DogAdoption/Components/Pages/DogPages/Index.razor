@@ -7,18 +7,18 @@
 
 <PageTitle>Index</PageTitle>
 
-<h1>Index</h1>
+<h1>Admin Dogs View</h1>
 
 <p>
-    <a href="dogs/create">Create New</a>
+    <a href="dogs/create">Add a dog</a>
 </p>
 
 <QuickGrid Class="table" Items="DbFactory.CreateDbContext().Dog">
     <PropertyColumn Property="dog => dog.Breed" />
-    <PropertyColumn Property="dog => dog.age" />
-    <PropertyColumn Property="dog => dog.ImageUrl" />
+    <PropertyColumn Property="dog => dog.age" Title="Age"/>
+    <PropertyColumn Property="dog => dog.ImageUrl" Title="Image"/>
     <PropertyColumn Property="dog => dog.Description" />
-    <PropertyColumn Property="dog => dog.HealthStatus" />
+    <PropertyColumn Property="dog => dog.HealthStatus" Title="Health Status"/>
     <PropertyColumn Property="dog => dog.Temperament" />
 
     <TemplateColumn Context="dog">
