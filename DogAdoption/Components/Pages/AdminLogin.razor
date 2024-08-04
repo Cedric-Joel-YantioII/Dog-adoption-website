@@ -1,4 +1,4 @@
-﻿@page "/admin/login"
+﻿@page "/login"
 
 @using Microsoft.EntityFrameworkCore
 @using DogAdoption.Models
@@ -11,7 +11,14 @@
 
 <hr />
 
-<EditForm Model="@adminUser" OnValidSubmit="@HandleLogin">
+@if (showErrorMessage)
+{
+    <div class="alert alert-danger" role="alert">
+        Incorrect username or password, please try again.
+    </div>
+}
+
+<EditForm Model="@adminUser" OnValidSubmit="@HandleLogin" FormName="adminLoginForm">
     <DataAnnotationsValidator />
     <ValidationSummary />
 
@@ -27,11 +34,13 @@
 </EditForm>
 
 <div>
-    <a href="/admin/register">Register User</a>
+    <a href="/register">Register User</a>
 </div>
 
 @code {
-    private AdminUser adminUser = new AdminUser();
+    [SupplyParameterFromForm]
+    private AdminUser adminUser { get; set; } = new AdminUser();
+    private bool showErrorMessage = false;
 
     private async Task HandleLogin()
     {
@@ -43,12 +52,11 @@
         {
             // Successfully logged in
             // Navigate to admin dashboard or another page
-            NavigationManager.NavigateTo("/admin/dashboard");
+            NavigationManager.NavigateTo("/");
         }
         else
         {
-            // Show error message
-            // Example: set a flag to show a message in the UI
+            showErrorMessage = true;
         }
     }
 }

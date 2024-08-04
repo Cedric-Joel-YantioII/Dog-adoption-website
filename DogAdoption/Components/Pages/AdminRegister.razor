@@ -1,4 +1,4 @@
-﻿@page "/admin/register"
+﻿@page "/register"
 
 @using Microsoft.EntityFrameworkCore
 @using DogAdoption.Models
@@ -10,6 +10,13 @@
 <h1>Register Admin User</h1>
 
 <hr />
+
+@if (showMessage == true)
+{
+    <div class="alert alert-success" role="alert">
+        You have been registered! Please navigate back to the login page.
+    </div>
+}
 
 <EditForm Model="@adminUser" OnValidSubmit="@HandleRegister" FormName="adminRegisterForm">
     <DataAnnotationsValidator />
@@ -27,18 +34,24 @@
 </EditForm>
 
 @code {
-    private AdminUser adminUser = new AdminUser();
+    [SupplyParameterFromForm]
+    private AdminUser adminUser { get; set; } = new AdminUser();
+    private bool showMessage = false;
 
     private async Task HandleRegister()
     {
         try
         {
+            Console.WriteLine($"Username: {adminUser.Username}, Password: {adminUser.Password}");
+
             using var dbContext = DbFactory.CreateDbContext();
             dbContext.AdminUser.Add(adminUser);
             await dbContext.SaveChangesAsync();
 
-            // Redirect to the login page after successful registration
-            NavigationManager.NavigateTo("/admin/login");
+            showMessage = true;
+            StateHasChanged();
+
+
         }
         catch (Exception ex)
         {
@@ -47,6 +60,7 @@
         }
     }
 }
+
 
 
 
