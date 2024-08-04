@@ -13,7 +13,12 @@
     <a href="dogs/create">Add a dog</a>
 </p>
 
+<p>
+    <a href="dogs/search">Search for a Dog</a>
+</p>
+
 <QuickGrid Class="table" Items="DbFactory.CreateDbContext().Dog">
+    <PropertyColumn Property="dog => dog.Id" />
     <PropertyColumn Property="dog => dog.Breed" />
     <PropertyColumn Property="dog => dog.age" Title="Age"/>
     <TemplateColumn Title="Image" Context="dog">
